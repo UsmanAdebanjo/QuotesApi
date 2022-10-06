@@ -15,9 +15,23 @@ namespace QuotesApi.Controllers
         QuotesDbContext context= new QuotesDbContext();
         // GET: api/Quotes
         [HttpGet]
-        public IHttpActionResult Quotes()
+        public IHttpActionResult Quotes(string sort)
         {
-            var quotes= context.Quotes;
+            sort = sort.ToLower();
+            IQueryable<Quote> quotes;
+            switch (sort)
+            {
+                case "asc":
+                    quotes = context.Quotes.OrderBy(q => q.CreatedAt);
+                        break;
+                case "desc":
+                    quotes = context.Quotes.OrderByDescending(q => q.CreatedAt);
+                    break;
+                default: 
+                    quotes= context.Quotes;
+                    break;
+            }
+           
             if (quotes == null)
             {
                 return NotFound();
