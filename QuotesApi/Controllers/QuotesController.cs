@@ -55,6 +55,15 @@ namespace QuotesApi.Controllers
             return Ok(pages);
         }
 
+
+        [HttpGet]
+        [Route("api/Quotes/SearchQuote/{search=}")]
+        public IHttpActionResult SearchQuote(string search)
+        {
+            search = search.ToLower();
+            var searchedQuote = context.Quotes.Where(q => q.Type.Contains(search));
+            return Ok(searchedQuote);
+        }
         // GET: api/Quotes/5
         [HttpGet]
         public IHttpActionResult Quote(int id)
