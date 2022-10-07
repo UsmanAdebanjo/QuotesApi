@@ -28,5 +28,6 @@ namespace QuotesApi.Models
         public DateTime CreatedAt { get; set; }
 
 
+
     }
 }

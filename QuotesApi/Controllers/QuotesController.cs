@@ -2,9 +2,11 @@
 using QuotesApi.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web.Http;
 
 namespace QuotesApi.Controllers
@@ -27,6 +29,9 @@ namespace QuotesApi.Controllers
                 case "desc":
                     quotes = context.Quotes.OrderByDescending(q => q.CreatedAt);
                     break;
+                case null:
+                    quotes = context.Quotes;
+                    break;
                 default: 
                     quotes= context.Quotes;
                     break;
@@ -40,10 +45,14 @@ namespace QuotesApi.Controllers
         }
 
         [HttpGet]
-        [Route("api/Quotes/Test/{id}")]
-        public int Get(int id)
+        [Route("api/Quotes/PagingQuotes/{pageNumber=1}/{pageSize=5}")]
+        public IHttpActionResult PagingQuote(int pageNumber, int pageSize)
         {
-            return id;
+            IQueryable<Quote> pages;
+            var quotes = context.Quotes.OrderBy(q=>q.Id);
+           
+            pages = quotes.Skip((pageNumber - 1) * pageSize).Take(pageSize);
+            return Ok(pages);
         }
 
         // GET: api/Quotes/5
@@ -57,6 +66,14 @@ namespace QuotesApi.Controllers
             }
             return Ok(quote);
         }
+
+        //public async Task Quote(Quote quote)
+        //{
+        //     context.Quotes.Add(quote);
+
+        //    await context.SaveChangesAsync();
+
+        //}
 
         // POST: api/Quotes
         [HttpPost]
