@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
-namespace QuotesApi.Models
+namespace QuoteWebApiAuth.Models
 {
     public class Quote
     {
@@ -26,6 +26,8 @@ namespace QuotesApi.Models
         public string Type { get; set; }
 
         public DateTime CreatedAt { get; set; }
+
+        public string UserId { get; set; }
 
 
     }

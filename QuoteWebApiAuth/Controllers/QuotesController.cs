@@ -1,5 +1,5 @@
-﻿using QuotesApi.Data;
-using QuotesApi.Models;
+﻿using Microsoft.AspNet.Identity;
+using QuoteWebApiAuth.Models;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -8,14 +8,20 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
+using WebApi.OutputCache.V2;
 
-namespace QuotesApi.Controllers
+namespace QuoteWebApiAuth.Controllers
 {
+    [Authorize]
     public class QuotesController : ApiController
     {
 
-        QuotesDbContext context= new QuotesDbContext();
+        ApplicationDbContext context= new ApplicationDbContext();
+
+
         // GET: api/Quotes
+        [CacheOutput(ClientTimeSpan = 160)]
+        [AllowAnonymous]
         [HttpGet]
         public IHttpActionResult Quotes(string sort)
         {
@@ -42,13 +48,6 @@ namespace QuotesApi.Controllers
                 return NotFound();
             }
             return Ok(quotes);
-        }
-
-
-        [HttpGet]
-        public IHttpActionResult GetQuotes()
-        {
-            return Ok(context.Quotes);
         }
 
         [HttpGet]
@@ -91,6 +90,15 @@ namespace QuotesApi.Controllers
 
         //}
 
+        [HttpGet]
+        public IHttpActionResult MyQuotes()
+        {
+            string userId=User.Identity.GetUserId();
+
+            var myQuotes = context.Quotes.Where(q=>q.UserId==userId);
+            return Ok(myQuotes);
+        }
+
         // POST: api/Quotes
         [HttpPost]
         public IHttpActionResult Post([FromBody]Quote quote)
@@ -99,30 +107,41 @@ namespace QuotesApi.Controllers
             {
                 return BadRequest(ModelState);
             }
-            context.Quotes.Add(quote);  
-            context.SaveChanges();
+            string userId = User.Identity.GetUserId();
+            quote.UserId = userId;
+
+                context.Quotes.Add(quote);
+                context.SaveChanges();
+                
+            
             return StatusCode(HttpStatusCode.Created);
+          
         }
 
         // PUT: api/Quotes/5
         [HttpPut]
         public IHttpActionResult Put(int id, [FromBody]Quote quote)
         {
-            if((id<=0 || quote == null))
-            {
-                return StatusCode(HttpStatusCode.BadRequest);
-            }
+            string userId = User.Identity.GetUserId();  
+
             var quoteInDb = context.Quotes.Find(id);
             if (quoteInDb == null)
             {
-                return BadRequest($"Can't perform update for {id}. {id} not found");
+                return BadRequest($"Can't perform update, Id {id} not found");
             }
-            quoteInDb.Description = quote.Description;
-            quoteInDb.Author=quote.Author;
-            quoteInDb.Title=quote.Title;
-            context.SaveChanges();
+            if (quoteInDb.UserId == userId)
+            {
+                quoteInDb.Description = quote.Description;
+                quoteInDb.Author = quote.Author;
+                quoteInDb.Title = quote.Title;
+                context.SaveChanges();
 
-            return Ok("Update successful");
+                return Ok("Update successful");
+            }
+            else
+            {
+                return BadRequest("You are not authorised to modify this data");
+            }
 
         }
 
@@ -130,15 +149,24 @@ namespace QuotesApi.Controllers
         [HttpDelete]
         public IHttpActionResult Delete(int id)
         {
+            string userId=User.Identity.GetUserId();
             var quoteInDb=context.Quotes.Find(id);
             if(quoteInDb == null)
             {
                 return BadRequest($"Quote with {id} not found in Db");
             }
-            context.Quotes.Remove(quoteInDb);
-            context.SaveChanges();
+            if(quoteInDb.UserId == userId)
+            {
+                context.Quotes.Remove(quoteInDb);
+                context.SaveChanges();
+                return Ok();
+            }
 
-            return Ok();
+            else
+            {
+                return BadRequest("You don't have acces to delete this data");
+            }
+
         }
     }
 }

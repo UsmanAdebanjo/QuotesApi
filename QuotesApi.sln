@@ -5,6 +5,8 @@ VisualStudioVersion = 17.3.32811.315
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuotesApi", "QuotesApi\QuotesApi.csproj", "{ADB617DB-002C-491D-B9F7-30E8E668C9D9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuoteWebApiAuth", "QuoteWebApiAuth\QuoteWebApiAuth.csproj", "{9CDD302D-2FBA-43E9-A30B-69C1F6A20E3B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{ADB617DB-002C-491D-B9F7-30E8E668C9D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ADB617DB-002C-491D-B9F7-30E8E668C9D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ADB617DB-002C-491D-B9F7-30E8E668C9D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9CDD302D-2FBA-43E9-A30B-69C1F6A20E3B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9CDD302D-2FBA-43E9-A30B-69C1F6A20E3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9CDD302D-2FBA-43E9-A30B-69C1F6A20E3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9CDD302D-2FBA-43E9-A30B-69C1F6A20E3B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
